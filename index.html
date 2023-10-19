@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html class="ui-mobile">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="layout" content="test">
+    <title>桌号查询</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+</head>
+
+<body>
+    <style>
+        html,
+        body,
+        div {
+            font-size: 12px;
+            font-family: "Meiryo", "微软雅黑";
+        }
+        html{ -webkit-text-size-adjust:none;}
+        a,button,input{-webkit-tap-highlight-color:rgba(255,0,0,0);}
+        body {
+            overflow-x: hidden;
+        }
+
+        .content {
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 420px;
+            width: 100%;
+        }
+
+        .before {
+            font-size: 0.875em;
+            padding: .3em 2em .3em;
+            border: 2px solid rgb(241, 202, 126);
+            width: 120px;
+            height: 33px;
+        }
+
+        .after {
+            font-size: 0.875em;
+            padding: .3em 2em .3em;
+            border: 1px solid rgb(241, 202, 126);
+            /*border:1px solid #4997d2;*/
+            width: 240px;
+            height: 33px;
+        }
+
+        .top-box {
+            overflow: hidden;
+            /* 因为内部伪元素width:140%,必然超出屏幕，所以要溢出隐藏 */
+        }
+
+        .top-box-inner {
+            position: relative;
+            width: 100%;
+            height: 240px;
+        }
+
+        .top-box-inner:after {
+            background: url(./source/t.jpg) top center no-repeat;
+            background-size: cover;
+            /* 这个伪类的作用就是一个圆弧的背景色 */
+            width: 160%;
+            height: 240px;
+            position: absolute;
+            left: -30%;
+            /* 之所以left:20%,是因为width:140%，例如width:160%，那么left:30%才能水平居中，可以发现规律的 */
+            top: 0;
+            z-index: -1;
+            /*层叠顺序，最底层显示*/
+            content: '';
+            border-radius: 0 0 50% 50%;
+            overflow: hidden;
+        }
+
+
+        div.search {
+            padding: 15px 0;
+        }
+
+        form {
+            position: relative;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        input,
+        button {
+            border: none;
+            outline: none;
+        }
+
+        input {
+            width: calc(100% - 117px);
+            height: 42px;
+            padding-left: 13px;
+            padding-right: 100px;
+        }
+
+        button {
+            height: 100%;
+            width: 100px;
+            cursor: pointer;
+            position: absolute;
+        }
+
+        .bar6 input {
+            border: 2px solid #c5464a;
+            border-radius: 5px;
+            background: transparent;
+            top: 0;
+            right: 0;
+        }
+
+        .bar6 button {
+            background: #c5464a;
+            border-radius: 0 5px 5px 0;
+            width: 100px;
+            top: 0;
+            right: 0;
+        }
+
+        .bar6 button:before {
+            content: "查询";
+            font-size: 13px;
+            color: #F9F0DA;
+        }
+
+        .title {
+            width: 100%;
+            text-align: center;
+            font-size: large;
+        }
+
+        .footer {
+            width: 100%;
+            text-align: center;
+            font-size: larger;
+            height: 60px;
+            margin-top: -50px;
+        }
+
+        .title .hold {
+            color: #c5464a;
+            font-weight: bolder;
+        }
+
+        .b-img {
+            width: 100%;
+            text-align: center;
+            margin-top: -50px;
+        }
+
+        .b-img img {
+            max-width: 376px;
+            max-height: 376px;
+            width: 100%;
+        }
+    </style>
+    <script>
+        window.alert = function (msg, callback, err) {
+            var div = document.createElement("div");
+            div.innerHTML = "<style type=\"text/css\">"
+                + ".nbaMask { position: fixed; z-index: 1000; top: 0; right: 0; left: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); } "
+                + ".nbaMaskTransparent { position: fixed; z-index: 1000; top: 0; right: 0; left: 0; bottom: 0; } "
+                + ".nbaDialog {position: fixed; z-index: 5000; width: 80%; max-width: 300px; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%); transform: translate(-50%, -50%); background-color: #fff; text-align: center; border-radius: 8px; overflow: hidden; opacity: 1; color: white; }"
+                + ".nbaDialog .nbaDialogHd { padding: .2rem .27rem .08rem .27rem; } "
+                + ".nbaDialog .nbaDialogHd .nbaDialogTitle { font-size: 17px; font-weight: 400; } "
+                + ".nbaDialog .nbaDialogBd {height:100px;margin-top:60px;padding: 0 2rem; font-size: 15px; word-wrap: break-word; word-break: break-all; color: #000000; } "
+                + ".nbaDialog .nbaDialogFt { position: relative; line-height: 48px; font-size: 17px; display: -webkit-box; display: -webkit-flex; display: flex; } "
+                + ".nbaDialog .nbaDialogFt:after { content: \" \"; position: absolute; left: 0; top: 0; right: 0; height: 1px; border-top: 1px solid #e6e6e6; color: #e6e6e6; -webkit-transform-origin: 0 0; transform-origin: 0 0; -webkit-transform: scaleY(0.5); transform: scaleY(0.5); } "
+                + ".nbaDialog .nbaDialogBtn {height:42px;background-color: #c5464a;color:#fff; display: block; -webkit-box-flex: 1; -webkit-flex: 1; flex: 1;  text-decoration: none; -webkit-tap-highlight-color: transparent; position: relative; margin-bottom: 0; } "
+                + ".nbaDialog .nbaDialogBtn:after { content: \" \"; position: absolute; left: 0; top: 0; width: 1px; bottom: 0; border-left: 1px solid #e6e6e6; color: #e6e6e6; -webkit-transform-origin: 0 0; transform-origin: 0 0; -webkit-transform: scaleX(0.5); transform: scaleX(0.5); } "
+                + ".nbaDialog a { text-decoration: none; -webkit-tap-highlight-color: transparent; }"
+                + "</style>"
+                + "<div id=\"dialogs2\" style=\"display: none\">"
+                + "<div class=\"nbaMask\"></div>"
+                + "<div class=\"nbaDialog\">"
+                + " <div class=\"nbaDialogHd\">"
+                + " <strong class=\"nbaDialogTitle\"></strong>"
+                + " </div>"
+                + " <div class=\"nbaDialogBd\" id=\"dialog_msg2\"></div>"
+                + " <div class=\"nbaDialogHd\">"
+                + " <strong class=\"nbaDialogTitle\"></strong>"
+                + " </div>"
+                + " <div class=\"nbaDialogFt\">"
+                + " <button class=\"nbaDialogBtn nbaDialogBtnPrimary\" id=\"dialog_ok2\">确定</button>"
+                + " </div></div></div>";
+            document.body.appendChild(div);
+
+            var dialogs2 = document.getElementById("dialogs2");
+            dialogs2.style.display = 'block';
+
+            var dialog_msg2 = document.getElementById("dialog_msg2");
+            dialog_msg2.innerHTML = msg;
+
+            var dialog_ok2 = document.getElementById("dialog_ok2");
+            dialog_ok2.onclick = function () {
+                dialogs2.style.display = 'none';
+                callback();
+            };
+        };
+        var data = [{ name: "高德明", deskNum: "001" }, { name: "戴学冬", deskNum: "002" }, { name: "张蓝", deskNum: "003" }];
+        function queryDeskNum() {
+            var name = document.getElementById("username").value;
+            var names = data.filter(x => x.name.startsWith(name));
+            if (names && names.length == 1) {
+                window.alert("您的桌号" + "<br/><b style='color:#c5464a;font-weight:900;font-size:xx-large'>" + names[0].deskNum + "</b>");
+            }
+            else {
+                window.alert("<span>未查询到您的桌号信息，请确认姓名是否正确！</span>");
+            }
+        }
+    </script>
+    <div class="content">
+        <div class="top-box">
+            <div class="top-box-inner">
+            </div>
+        </div>
+        <div>
+            <div class="title">
+                <p>欢迎参加<span class="hold">戴学冬 ❤️ 孟繁迪</span>的婚礼</p>
+            </div>
+            <div class="search bar6">
+                <form onclick="return false;">
+                    <input id="username" type="text" placeholder="请输入姓名查看桌号">
+                    <button onclick="queryDeskNum()"></button>
+                </form>
+            </div>
+            <div class="b-img">
+                <img src="./source/b.gif" alt="">
+            </div>
+            <div class="footer">
+                <p class="time">10月29日 12:00</br>成都蓝海御华酒店</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
